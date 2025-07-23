@@ -1,205 +1,201 @@
 import { useState, useEffect } from "react";
-import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Calendar, Clock, MapPin, Settings, RefreshCw, AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { TimetableCard } from "./TimetableCard";
 
-interface TimetableEntry {
-  id: string;
-  subject: string;
-  teacher: string;
-  room: string;
-  startTime: string;
-  endTime: string;
-  day: string;
-  type?: "lesson" | "break" | "lunch";
+interface SetupConfig {
+  username: string;
+  password: string;
+  baseUrl: string;
+  vertretungsplanUrl: string;
+  timetableUrl: string;
 }
 
-// Mock data - will be replaced with API calls
-const mockTimetable: TimetableEntry[] = [
-  {
-    id: "1",
-    subject: "Mathematics",
-    teacher: "Mr. Schmidt",
-    room: "A101",
-    startTime: "08:00",
-    endTime: "08:45",
-    day: "Monday"
-  },
-  {
-    id: "2",
-    subject: "German",
-    teacher: "Ms. Mueller",
-    room: "B203",
-    startTime: "08:50",
-    endTime: "09:35",
-    day: "Monday"
-  },
-  {
-    id: "break1",
-    subject: "Break",
-    teacher: "",
-    room: "",
-    startTime: "09:35",
-    endTime: "09:50",
-    day: "Monday",
-    type: "break"
-  },
-  {
-    id: "3",
-    subject: "English",
-    teacher: "Mr. Johnson",
-    room: "C105",
-    startTime: "09:50",
-    endTime: "10:35",
-    day: "Monday"
-  },
-  {
-    id: "4",
-    subject: "Biology",
-    teacher: "Dr. Weber",
-    room: "Lab 1",
-    startTime: "10:40",
-    endTime: "11:25",
-    day: "Monday"
-  },
-  {
-    id: "lunch",
-    subject: "Lunch",
-    teacher: "",
-    room: "",
-    startTime: "11:25",
-    endTime: "12:10",
-    day: "Monday",
-    type: "lunch"
-  },
-  {
-    id: "5",
-    subject: "History",
-    teacher: "Mr. Wagner",
-    room: "A205",
-    startTime: "12:10",
-    endTime: "12:55",
-    day: "Monday"
-  },
-  {
-    id: "6",
-    subject: "Physics",
-    teacher: "Dr. Schneider",
-    room: "Lab 2",
-    startTime: "13:00",
-    endTime: "13:45",
-    day: "Monday"
-  }
-];
+interface TimetableViewProps {
+  onOpenSettings: () => void;
+}
 
-export const TimetableView = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [currentTime, setCurrentTime] = useState(new Date());
+export const TimetableView = ({ onOpenSettings }: TimetableViewProps) => {
+  const [config, setConfig] = useState<SetupConfig | null>(null);
+  const [timetableData, setTimetableData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000); // Update every minute
-
-    return () => clearInterval(timer);
+    const savedConfig = localStorage.getItem('elternportal-config');
+    if (savedConfig) {
+      const parsedConfig = JSON.parse(savedConfig);
+      setConfig(parsedConfig);
+      fetchTimetable(parsedConfig);
+    }
   }, []);
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+  const fetchTimetable = async (configToUse?: SetupConfig) => {
+    const activeConfig = configToUse || config;
+    if (!activeConfig) return;
+
+    setIsLoading(true);
+    setHasError(false);
+
+    try {
+      const response = await fetch('https://test-api-pwwbj5-10d814-150-230-144-172.traefik.me/api/plan/custom', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(activeConfig)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setTimetableData(result.data);
+        toast({
+          title: "Updated successfully",
+          description: "Timetable refreshed"
+        });
+      } else {
+        throw new Error(result.message || 'Failed to fetch timetable');
+      }
+    } catch (error) {
+      setHasError(true);
+      toast({
+        title: "Update failed",
+        description: "Could not fetch timetable",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const isCurrentLesson = (startTime: string, endTime: string): boolean => {
-    const now = currentTime;
-    const [startHour, startMin] = startTime.split(':').map(Number);
-    const [endHour, endMin] = endTime.split(':').map(Number);
-    
-    const startDate = new Date(now);
-    startDate.setHours(startHour, startMin, 0, 0);
-    
-    const endDate = new Date(now);
-    endDate.setHours(endHour, endMin, 0, 0);
-    
-    return now >= startDate && now <= endDate;
+  const refreshTimetable = () => {
+    if (config) {
+      fetchTimetable();
+    }
   };
 
-  const navigateDate = (direction: 'prev' | 'next') => {
-    const newDate = new Date(currentDate);
-    newDate.setDate(newDate.getDate() + (direction === 'next' ? 1 : -1));
-    setCurrentDate(newDate);
-  };
+  if (!config) {
+    return (
+      <div className="flex-1 overflow-y-auto pb-20">
+        <div className="p-4">
+          <div className="flex items-center gap-2 mb-6">
+            <Calendar className="text-primary" size={24} />
+            <h1 className="text-xl font-bold text-foreground">Timetable</h1>
+          </div>
 
-  const todayEntries = mockTimetable.filter(entry => {
-    // For now, showing Monday's schedule. In real app, filter by actual day
-    return entry.day === "Monday";
+          <Card className="p-6">
+            <div className="text-center mb-6">
+              <Settings className="mx-auto mb-4 text-muted-foreground" size={48} />
+              <h3 className="font-semibold mb-2">Setup Required</h3>
+              <p className="text-sm text-muted-foreground">
+                Configure your eltern-portal connection to view your timetable
+              </p>
+            </div>
+
+            <Button onClick={onOpenSettings} className="w-full">
+              Open Settings
+            </Button>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  const today = new Date();
+  const todayStr = today.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
   });
+
+  const renderTimetableGrid = () => {
+    if (!timetableData?.days || !timetableData?.grid) {
+      return (
+        <Card className="p-8 text-center">
+          <Calendar className="mx-auto mb-4 text-muted-foreground" size={48} />
+          <h3 className="font-semibold mb-2">No timetable data</h3>
+          <p className="text-sm text-muted-foreground">Could not load your schedule</p>
+        </Card>
+      );
+    }
+
+    const getCurrentDayIndex = () => {
+      const dayOfWeek = today.getDay();
+      // Convert Sunday (0) to Monday-Friday (0-4) mapping
+      return dayOfWeek === 0 ? -1 : dayOfWeek - 1;
+    };
+
+    const currentDayIndex = getCurrentDayIndex();
+    const todaySchedule = currentDayIndex >= 0 && currentDayIndex < timetableData.grid[0]?.length 
+      ? timetableData.grid.map((period: any, periodIndex: number) => ({
+          period: timetableData.periods[periodIndex],
+          lesson: period[currentDayIndex]
+        })).filter((item: any) => item.lesson && item.lesson.content)
+      : [];
+
+    if (todaySchedule.length === 0) {
+      return (
+        <Card className="p-8 text-center">
+          <Calendar className="mx-auto mb-4 text-muted-foreground" size={48} />
+          <h3 className="font-semibold mb-2">No classes today</h3>
+          <p className="text-sm text-muted-foreground">Enjoy your free day!</p>
+        </Card>
+      );
+    }
+
+    return (
+      <div className="space-y-3">
+        {todaySchedule.map((item: any, index: number) => (
+          <Card key={index} className="p-4 border-l-4 border-l-primary">
+            <div className="flex items-start justify-between mb-2">
+              <h3 className="font-semibold text-primary">Period {item.period}</h3>
+            </div>
+            <div className="text-sm text-foreground whitespace-pre-line">
+              {item.lesson.content}
+            </div>
+          </Card>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="flex-1 overflow-y-auto pb-20">
-      {/* Header */}
       <div className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border z-10 p-4">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Calendar className="text-primary" size={24} />
             <h1 className="text-xl font-bold text-foreground">Timetable</h1>
           </div>
-          <div className="text-sm text-muted-foreground">
-            {currentTime.toLocaleTimeString('en-US', { 
-              hour: '2-digit', 
-              minute: '2-digit' 
-            })}
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={onOpenSettings}>
+              <Settings size={16} />
+            </Button>
+            <Button variant="outline" size="sm" onClick={refreshTimetable} disabled={isLoading}>
+              <RefreshCw className={isLoading ? "animate-spin" : ""} size={16} />
+            </Button>
           </div>
         </div>
-        
-        <Card className="p-3">
-          <div className="flex items-center justify-between">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigateDate('prev')}
-            >
-              <ChevronLeft size={16} />
-            </Button>
-            
-            <div className="text-center">
-              <h2 className="font-semibold text-base">{formatDate(currentDate)}</h2>
-              <p className="text-xs text-muted-foreground">{todayEntries.length} lessons today</p>
-            </div>
-            
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigateDate('next')}
-            >
-              <ChevronRight size={16} />
-            </Button>
-          </div>
-        </Card>
+        <p className="text-sm text-muted-foreground mt-1">{todayStr}</p>
       </div>
 
-      {/* Timetable Entries */}
       <div className="p-4">
-        {todayEntries.length > 0 ? (
-          <div className="space-y-2">
-            {todayEntries.map((entry) => (
-              <TimetableCard
-                key={entry.id}
-                entry={entry}
-                isActive={isCurrentLesson(entry.startTime, entry.endTime)}
-              />
-            ))}
-          </div>
-        ) : (
+        {hasError ? (
           <Card className="p-8 text-center">
-            <Calendar className="mx-auto mb-4 text-muted-foreground" size={48} />
-            <h3 className="font-semibold mb-2">No lessons today</h3>
-            <p className="text-sm text-muted-foreground">Enjoy your free day!</p>
+            <AlertCircle className="mx-auto mb-4 text-destructive" size={48} />
+            <h3 className="font-semibold mb-2">Connection Error</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Could not fetch timetable from your portal
+            </p>
+            <Button onClick={refreshTimetable} variant="outline">
+              Try Again
+            </Button>
           </Card>
+        ) : (
+          renderTimetableGrid()
         )}
       </div>
     </div>

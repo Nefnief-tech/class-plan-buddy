@@ -3,20 +3,38 @@ import { BottomNavigation } from "@/components/BottomNavigation";
 import { TimetableView } from "@/components/TimetableView";
 import { SubstituteView } from "@/components/SubstituteView";
 import { ProfileView } from "@/components/ProfileView";
+import { SetupView } from "@/components/SetupView";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("timetable");
+  const [showSetup, setShowSetup] = useState(false);
+
+  const handleSetupComplete = () => {
+    setShowSetup(false);
+  };
+
+  const openSettings = () => {
+    setShowSetup(true);
+  };
+
+  if (showSetup) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto">
+        <SetupView onSetupComplete={handleSetupComplete} />
+      </div>
+    );
+  }
 
   const renderActiveView = () => {
     switch (activeTab) {
       case "timetable":
-        return <TimetableView />;
+        return <TimetableView onOpenSettings={openSettings} />;
       case "substitute":
-        return <SubstituteView />;
+        return <SubstituteView onOpenSettings={openSettings} />;
       case "profile":
-        return <ProfileView />;
+        return <ProfileView onOpenSettings={openSettings} />;
       default:
-        return <TimetableView />;
+        return <TimetableView onOpenSettings={openSettings} />;
     }
   };
 

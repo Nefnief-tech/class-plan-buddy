@@ -5,7 +5,11 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-export const ProfileView = () => {
+interface ProfileViewProps {
+  onOpenSettings: () => void;
+}
+
+export const ProfileView = ({ onOpenSettings }: ProfileViewProps) => {
   return (
     <div className="flex-1 overflow-y-auto pb-20">
       <div className="p-4">
@@ -106,7 +110,7 @@ export const ProfileView = () => {
 
         {/* Actions */}
         <div className="space-y-3">
-          <Button variant="outline" className="w-full justify-start">
+          <Button variant="outline" className="w-full justify-start" onClick={onOpenSettings}>
             <Settings className="mr-2 h-4 w-4" />
             App Settings
           </Button>
