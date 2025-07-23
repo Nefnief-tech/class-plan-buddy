@@ -52,6 +52,25 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Subject colors for timetable
+				subject: {
+					math: 'hsl(var(--subject-math))',
+					german: 'hsl(var(--subject-german))',
+					english: 'hsl(var(--subject-english))',
+					history: 'hsl(var(--subject-history))',
+					biology: 'hsl(var(--subject-biology))',
+					chemistry: 'hsl(var(--subject-chemistry))',
+					physics: 'hsl(var(--subject-physics))',
+					art: 'hsl(var(--subject-art))',
+					music: 'hsl(var(--subject-music))',
+					sport: 'hsl(var(--subject-sport))',
+					default: 'hsl(var(--subject-default))'
+				},
+				// App specific colors
+				'bottom-nav': 'hsl(var(--bottom-nav))',
+				'bottom-nav-active': 'hsl(var(--bottom-nav-active))',
+				'schedule-card': 'hsl(var(--schedule-card))',
+				'time-indicator': 'hsl(var(--time-indicator))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',

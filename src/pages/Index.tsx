@@ -1,12 +1,29 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { BottomNavigation } from "@/components/BottomNavigation";
+import { TimetableView } from "@/components/TimetableView";
+import { SubstituteView } from "@/components/SubstituteView";
+import { ProfileView } from "@/components/ProfileView";
 
 const Index = () => {
+  const [activeTab, setActiveTab] = useState("timetable");
+
+  const renderActiveView = () => {
+    switch (activeTab) {
+      case "timetable":
+        return <TimetableView />;
+      case "substitute":
+        return <SubstituteView />;
+      case "profile":
+        return <ProfileView />;
+      default:
+        return <TimetableView />;
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto">
+      {renderActiveView()}
+      <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
 };
