@@ -1,4 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+// Ensure dark mode is applied immediately on app load
+if (typeof window !== "undefined") {
+  const theme = localStorage.getItem("theme");
+  if (theme === "dark") {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+}
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { TimetableView } from "@/components/TimetableView";
 import { SubstituteView } from "@/components/SubstituteView";

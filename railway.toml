@@ -1,0 +1,15 @@
+# Railpack deployment configuration for class-plan-buddy
+# See https://docs.railway.app/deploy/deployments/ for details
+
+[build]
+command = "pnpm install && pnpm build"
+
+[deploy]
+command = "pnpm run preview"
+
+[env]
+# Add your environment variables here
+# API_KEY = "your-api-key"
+
+[static]
+directory = "dist"

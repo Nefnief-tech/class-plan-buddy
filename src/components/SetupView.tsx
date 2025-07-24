@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 
 interface SetupConfig {
@@ -12,6 +13,7 @@ interface SetupConfig {
   baseUrl: string;
   vertretungsplanUrl: string;
   timetableUrl: string;
+  apiKey?: string;
 }
 
 interface SetupViewProps {
@@ -24,12 +26,16 @@ export const SetupView = ({ onSetupComplete }: SetupViewProps) => {
     password: "",
     baseUrl: "",
     vertretungsplanUrl: "",
-    timetableUrl: ""
+    timetableUrl: "",
+    apiKey: ""
   });
   const [currentStep, setCurrentStep] = useState(1);
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [testResults, setTestResults] = useState<any>(null);
+  const [showUrls, setShowUrls] = useState(false);
   const { toast } = useToast();
+
+  // No automatic URL generation; user must enter URLs manually
 
   const updateConfig = (field: keyof SetupConfig, value: string) => {
     setConfig(prev => ({ ...prev, [field]: value }));
@@ -162,6 +168,17 @@ export const SetupView = ({ onSetupComplete }: SetupViewProps) => {
           </p>
         </div>
 
+        <div>
+          <Label htmlFor="apiKey">API Key (if required)</Label>
+          <Input
+            id="apiKey"
+            type="text"
+            value={config.apiKey}
+            onChange={(e) => updateConfig('apiKey', e.target.value)}
+            placeholder="Your API key (optional)"
+          />
+        </div>
+
         <Button 
           onClick={() => setCurrentStep(2)}
           disabled={!config.username || !config.password || !config.baseUrl}
@@ -174,17 +191,17 @@ export const SetupView = ({ onSetupComplete }: SetupViewProps) => {
   );
 
   const renderStep2 = () => (
-    <Card className="p-6">
+    <Card className="p-8 rounded-2xl shadow-lg border border-border bg-gradient-to-br from-white via-slate-50 to-zinc-100 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900">
       <div className="mb-6">
-        <h3 className="font-semibold mb-2">Optional: Direct URLs</h3>
+        <h3 className="font-semibold mb-2 text-lg">Connection Details</h3>
         <p className="text-sm text-muted-foreground">
-          These are usually auto-detected, but you can specify them manually if needed
+          Please enter the full URLs for your substitute and timetable plans below.
         </p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <Label htmlFor="vertretungsplanUrl">Substitute Plan URL (optional)</Label>
+          <Label htmlFor="vertretungsplanUrl">Substitute Plan URL</Label>
           <Input
             id="vertretungsplanUrl"
             type="url"
@@ -193,9 +210,8 @@ export const SetupView = ({ onSetupComplete }: SetupViewProps) => {
             placeholder="https://your-school.eltern-portal.org/service/vertretungsplan"
           />
         </div>
-
         <div>
-          <Label htmlFor="timetableUrl">Timetable URL (optional)</Label>
+          <Label htmlFor="timetableUrl">Timetable URL</Label>
           <Input
             id="timetableUrl"
             type="url"
@@ -205,14 +221,14 @@ export const SetupView = ({ onSetupComplete }: SetupViewProps) => {
           />
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 mt-4">
           <Button variant="outline" onClick={() => setCurrentStep(1)}>
             Back
           </Button>
           <Button 
             onClick={testConnection}
             disabled={isTestingConnection}
-            className="flex-1"
+            className="flex-1 btn-primary"
           >
             {isTestingConnection ? "Testing..." : "Test Connection"}
           </Button>

@@ -1,4 +1,5 @@
-import { User, Settings, LogOut, Bell, Palette } from "lucide-react";
+import { User, Settings, LogOut, Bell, Palette, Moon } from "lucide-react";
+import { useDarkMode } from "@/hooks/use-dark-mode";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -10,6 +11,7 @@ interface ProfileViewProps {
 }
 
 export const ProfileView = ({ onOpenSettings }: ProfileViewProps) => {
+  const [isDark, setIsDark] = useDarkMode();
   return (
     <div className="flex-1 overflow-y-auto pb-20">
       <div className="p-4">
@@ -66,6 +68,21 @@ export const ProfileView = ({ onOpenSettings }: ProfileViewProps) => {
                 </div>
               </div>
               <Switch id="notifications" />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Moon size={16} className="text-muted-foreground" />
+                <div>
+                  <Label htmlFor="darkmode" className="text-sm font-medium">
+                    Dark Mode
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Switch between light and dark theme
+                  </p>
+                </div>
+              </div>
+              <Switch id="darkmode" checked={isDark} onCheckedChange={setIsDark} />
             </div>
 
             <div className="flex items-center justify-between">

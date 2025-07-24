@@ -18,6 +18,7 @@ interface TimetableCardProps {
 }
 
 const subjectColorMap: Record<string, string> = {
+  // English
   "Mathematics": "subject-math",
   "Math": "subject-math",
   "German": "subject-german",
@@ -30,18 +31,46 @@ const subjectColorMap: Record<string, string> = {
   "Music": "subject-music",
   "Sport": "subject-sport",
   "PE": "subject-sport",
+  // German abbreviations
+  "Geo": "subject-history", // Geography
+  "D": "subject-german",
+  "E": "subject-english",
+  "M": "subject-math",
+  "Ph": "subject-physics",
+  "Ch": "subject-chemistry",
+  "Bio": "subject-biology",
+  "Ku": "subject-art",
+  "Mu": "subject-music",
+  "Sp": "subject-sport",
+  "Eth": "subject-history",
+  "Ev": "subject-history",
+  "Rel": "subject-history",
+  "Inf": "subject-math",
+  "Fr": "subject-english",
+  "Lat": "subject-english",
+  "It": "subject-english",
+  "Soz": "subject-history",
+  "Wi": "subject-history",
+  "NTG": "subject-biology",
+  "SG": "subject-sport",
 };
 
 const getSubjectColor = (subject: string): string => {
-  const colorKey = Object.keys(subjectColorMap).find(key => 
+  if (!subject) return "subject-default";
+  // Try to match full subject name
+  let colorKey = Object.keys(subjectColorMap).find(key =>
     subject.toLowerCase().includes(key.toLowerCase())
   );
-  return colorKey ? subjectColorMap[colorKey] : "subject-default";
+  if (colorKey) return subjectColorMap[colorKey];
+  // Try to match first word/abbreviation
+  const abbr = subject.split(/[^A-Za-zÄÖÜäöüß]+/)[0];
+  if (abbr && subjectColorMap[abbr]) return subjectColorMap[abbr];
+  return "subject-default";
 };
 
 export const TimetableCard = ({ entry, isActive = false }: TimetableCardProps) => {
   const subjectColor = getSubjectColor(entry.subject);
-  
+
   if (entry.type === "break" || entry.type === "lunch") {
     return (
       <Card className="p-4 mb-3 bg-muted/50 border-dashed">
@@ -58,50 +87,35 @@ export const TimetableCard = ({ entry, isActive = false }: TimetableCardProps) =
   }
 
   return (
-    <Card 
+    <Card
       className={cn(
-        "p-4 mb-3 transition-all duration-300 hover:shadow-[var(--shadow-floating)]",
-        "bg-gradient-to-r from-schedule-card to-schedule-card/95",
+        "flex items-center justify-between gap-4 px-5 py-3 mb-4 rounded-xl border-l-4",
+        "bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100",
         isActive && "ring-2 ring-time-indicator shadow-[var(--shadow-floating)]"
       )}
       style={{
-        borderLeft: `4px solid hsl(var(--${subjectColor}))`,
+        borderLeft: `4px solid hsl(var(--${subjectColor}))`
       }}
     >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            <h3 
-              className="font-semibold text-base"
-              style={{ color: `hsl(var(--${subjectColor}))` }}
-            >
-              {entry.subject}
-            </h3>
-            {isActive && (
-              <div className="w-2 h-2 bg-time-indicator rounded-full animate-pulse" />
-            )}
-          </div>
-          
-          <p className="text-sm text-muted-foreground mb-2">{entry.teacher}</p>
-          
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Clock size={12} />
-              <span>{entry.startTime} - {entry.endTime}</span>
-            </div>
-            <div className="flex items-center gap-1">
+      <div className="flex flex-col flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="font-semibold text-base" style={{ color: `hsl(var(--${subjectColor}))` }}>{entry.subject}</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          {entry.teacher && <span className="font-medium">{entry.teacher}</span>}
+          {entry.room && (
+            <span className="flex items-center gap-1">
               <MapPin size={12} />
-              <span>{entry.room}</span>
-            </div>
-          </div>
+              {entry.room}
+            </span>
+          )}
         </div>
-        
-        <div 
-          className="w-12 h-12 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-sm"
-          style={{ backgroundColor: `hsl(var(--${subjectColor}))` }}
-        >
-          {entry.subject.substring(0, 2).toUpperCase()}
-        </div>
+      </div>
+      <div
+        className="w-12 h-12 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-sm shrink-0"
+        style={{ backgroundColor: `hsl(var(--${subjectColor}))` }}
+      >
+        {entry.subject.substring(0, 2).toUpperCase()}
       </div>
     </Card>
   );

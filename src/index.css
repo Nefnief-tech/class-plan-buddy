@@ -5,87 +5,111 @@
 /* Student Timetable App Design System */
 
 @layer base {
-  :root {
-    --background: 248 100% 97%;
-    --foreground: 230 20% 15%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 230 20% 15%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 230 20% 15%;
-
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 230 20% 15%;
-
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
-
-    --accent: 217 91% 95%;
-    --accent-foreground: 217 91% 40%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 217 91% 60%;
-
-    /* Subject Colors */
-    --subject-math: 221 83% 53%;
-    --subject-german: 142 76% 36%;
-    --subject-english: 271 81% 56%;
-    --subject-history: 25 95% 53%;
-    --subject-biology: 173 58% 39%;
-    --subject-chemistry: 316 73% 52%;
-    --subject-physics: 13 93% 66%;
-    --subject-art: 340 82% 52%;
-    --subject-music: 260 60% 65%;
-    --subject-sport: 88 50% 53%;
-    --subject-default: 220 9% 46%;
-
-    /* App Specific Colors */
-    --bottom-nav: 0 0% 100%;
-    --bottom-nav-active: 217 91% 60%;
-    --schedule-card: 0 0% 100%;
-    --time-indicator: 217 91% 60%;
-    
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 70%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 14% 98%));
-    --gradient-subject: linear-gradient(135deg, var(--subject-color), var(--subject-color-light));
-
-    /* Shadows */
-    --shadow-card: 0 2px 10px -2px hsl(217 91% 60% / 0.1);
-    --shadow-bottom-nav: 0 -2px 20px -5px hsl(217 91% 60% / 0.15);
-    --shadow-floating: 0 8px 25px -8px hsl(217 91% 60% / 0.25);
-
-    /* Mobile Optimized Spacing */
-    --mobile-padding: 1rem;
-    --mobile-margin: 0.75rem;
-    --bottom-nav-height: 4rem;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+  .card {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    color: #e0e7ef;
+    border-radius: 1.25rem;
+    box-shadow: 0 8px 32px 0 rgba(30,41,59,0.18);
+    border: none;
+    padding: 2rem 1.5rem;
+    margin-bottom: 2rem;
+    transition: box-shadow 0.2s, background 0.2s;
+    backdrop-filter: blur(2px);
+  
+  .card:hover {
+    box-shadow: 0 12px 40px 0 rgba(30,41,59,0.24);
+    background: linear-gradient(135deg, #2563eb 0%, #1e293b 100%);
   }
+
+  .btn-primary {
+    background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
+    color: #fff;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    box-shadow: 0 2px 8px 0 rgba(37,99,235,0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+    border: none;
+  }
+  .btn-primary:hover {
+    background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
+    box-shadow: 0 4px 16px 0 rgba(37,99,235,0.12);
+  }
+
+  .input, .select {
+    border-radius: 0.75rem;
+    border: 1.5px solid #334155;
+    padding: 0.5rem 1rem;
+    background: #1e293b;
+    color: #e0e7ef;
+    transition: border-color 0.2s;
+  }
+  .input:focus, .select:focus {
+    border-color: #2563eb;
+    outline: none;
+  }
+
+  .label {
+    color: #2563eb;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    display: block;
+  }
+
+  .switch {
+    accent-color: #2563eb;
+  }
+}
+
+:root {
+  --muted: 220 14% 96%;
+  --muted-foreground: 220 9% 46%;
+  --accent: 217 91% 95%;
+  --accent-foreground: 217 91% 40%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 217 91% 60%;
+  /* Subject Colors */
+  --subject-math: 221 83% 53%;
+  --subject-german: 142 76% 36%;
+  --subject-english: 271 81% 56%;
+  --subject-history: 25 95% 53%;
+  --subject-biology: 173 58% 39%;
+  --subject-chemistry: 316 73% 52%;
+  --subject-physics: 13 93% 66%;
+  --subject-art: 340 82% 52%;
+  --subject-music: 260 60% 65%;
+  --subject-sport: 88 50% 53%;
+  --subject-default: 220 9% 46%;
+  /* App Specific Colors */
+  --bottom-nav: 0 0% 100%;
+  --bottom-nav-active: 217 91% 60%;
+  --schedule-card: 0 0% 100%;
+  --time-indicator: 217 91% 60%;
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 70%));
+  --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 14% 98%));
+  --gradient-subject: linear-gradient(135deg, var(--subject-color), var(--subject-color-light));
+  /* Shadows */
+  --shadow-card: 0 2px 10px -2px hsl(217 91% 60% / 0.1);
+  --shadow-bottom-nav: 0 -2px 20px -5px hsl(217 91% 60% / 0.15);
+  --shadow-floating: 0 8px 25px -8px hsl(217 91% 60% / 0.25);
+  /* Mobile Optimized Spacing */
+  --mobile-padding: 1rem;
+  --mobile-margin: 0.75rem;
+  --bottom-nav-height: 4rem;
+  --radius: 0.5rem;
+  --sidebar-background: 0 0% 98%;
+  --sidebar-foreground: 240 5.3% 26.1%;
+  --sidebar-primary: 240 5.9% 10%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --sidebar-accent-foreground: 240 5.9% 10%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 217.2 91.2% 59.8%;
+}
 
   .dark {
     --background: 222.2 84% 4.9%;
@@ -122,7 +146,11 @@
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+  --sidebar-ring: 217.2 91.2% 59.8%;
+
+  /* Bottom Navigation Bar Dark Mode */
+  --bottom-nav: 222.2 84% 4.9%; /* matches dark card/bg */
+  --bottom-nav-active: 217 91% 60%;
   }
 }
 
